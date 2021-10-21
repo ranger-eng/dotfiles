@@ -37,6 +37,10 @@ nnoremap <C-s> :w<CR>
 inoremap <C-s> <Esc>:w<CR> 
 vnoremap <C-s> <Esc>:w<CR>
 
+" quick fix list navigation
+nnoremap qj :cn<CR>
+nnoremap qk :cp<CR>
+
 " yank and paste to system clipboard
 noremap ty "+y
 noremap tY "+Y 
@@ -78,8 +82,10 @@ Plug 'kana/vim-smartinput' " you enter {|, it pastes {|}.
 
 " language server protocol
 Plug 'neovim/nvim-lspconfig'
+Plug 'ms-jpq/coq-nvim'
 
 " telescope
+Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-telescope/telescope.nvim'
@@ -104,6 +110,11 @@ let g:NERDTreeChDirMode = 2
 "------------------------------------------------------------------------------
 " colorscheme
 colorscheme gruvbox
+
+
+"------------------------------------------------------------------------------
+" autocompletion configuration
+"------------------------------------------------------------------------------     
 
 
 "------------------------------------------------------------------------------
@@ -219,14 +230,10 @@ nnoremap <Leader>q :SlimeSend1 exit<CR>
 "------------------------------------------------------------------------------
 " lsp configuration
 "------------------------------------------------------------------------------
-lua << EOF
-require'lspconfig'.pyright.setup{}
-require'lspconfig'.ccls.setup{}
-require'lspconfig'.rls.setup{}
-EOF
 
 lua << EOF
 local nvim_lsp = require('lspconfig')
+local coq = require('coq')
 local on_attach = function(client, bufnr)
   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
   local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
@@ -280,6 +287,12 @@ local servers = { "pyright", "tsserver" }
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { on_attach = on_attach }
 end
+EOF
+
+lua << EOF
+require'lspconfig'.pyright.setup{}
+require'lspconfig'.ccls.setup{}
+require'lspconfig'.rls.setup{}
 EOF
 
 
