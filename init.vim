@@ -32,10 +32,23 @@ set scrolloff=8
 " remap the escape key to jk if fast succession. This way, exiting insert mode
 " is easier.
 :imap jk <Esc>
+:vmap jk <Esc>
 noremap b s
 nnoremap <C-s> :w<CR>
 inoremap <C-s> <Esc>:w<CR> 
 vnoremap <C-s> <Esc>:w<CR>
+nmap po o<Esc>k
+nmap PO O<Esc>j
+set timeoutlen=400
+nnoremap Y y$
+
+" cool thing to be able to move lines up and down
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
+inoremap <C-k> <esc>:m .-2<CR>==i
+inoremap <C-j> <esc>:m .+1<CR>==i
+nnoremap <leader>k :m .-2<CR>==
+nnoremap <leader>j :m .+1<CR>==
 
 " quick fix list navigation
 nnoremap qj :cn<CR>
@@ -46,6 +59,19 @@ noremap ty "+y
 noremap tY "+Y 
 noremap tp "+p
 noremap tP "+P
+
+" wrap a word in quotes
+:nnoremap <tab>" ciw""<Esc>P
+:nnoremap <tab>' ciw''<Esc>P
+:nnoremap <tab>{ ciw{}<Esc>P
+:nnoremap <tab>[ ciw[]<Esc>P
+:nnoremap <tab>( ciw()<Esc>P
+
+:vnoremap <tab>" c""<Esc>P
+:vnoremap <tab>' c''<Esc>P
+:vnoremap <tab>{ c{}<Esc>P
+:vnoremap <tab>[ c[]<Esc>P
+:vnoremap <tab>( c()<Esc>P
 
 "set path to include current directory and all childeren directories - note,
 "be careful of large projects, this path will bottleneck performance
@@ -78,11 +104,19 @@ Plug 'jpalardy/vim-slime', { 'for': 'python' } " run python script in a seperate
 Plug 'hanschen/vim-ipython-cell', { 'for': 'python' } " same
 Plug 'scrooloose/nerdtree'  " file list - :NERDTree to start
 Plug 'haya14busa/incsearch.vim' " include search and search highlighting 
-Plug 'kana/vim-smartinput' " you enter {|, it pastes {|}.
 
 " language server protocol
 Plug 'neovim/nvim-lspconfig'
 Plug 'ms-jpq/coq-nvim'
+Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
+Plug 'ms-jpq/coq.thirdparty', {'branch': '3p'}
+if has('nvim')
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+else
+  Plug 'Shougo/deoplete.nvim'
+  Plug 'roxma/nvim-yarp'
+  Plug 'roxma/vim-hug-neovim-rpc'
+endif
 
 " telescope
 Plug 'nvim-treesitter/nvim-treesitter'
@@ -91,7 +125,7 @@ Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzy-native.nvim'
 
-Plug 'kana/vim-smartinput'
+" Plug 'kana/vim-smartinput'
 " visual themes
 Plug 'gruvbox-community/gruvbox' 
 Plug 'vim-airline/vim-airline'
@@ -115,6 +149,7 @@ colorscheme gruvbox
 "------------------------------------------------------------------------------
 " autocompletion configuration
 "------------------------------------------------------------------------------     
+" let g:deoplete#enable_at_startup = 1
 
 
 "------------------------------------------------------------------------------
@@ -232,6 +267,9 @@ nnoremap <Leader>q :SlimeSend1 exit<CR>
 "------------------------------------------------------------------------------
 
 lua << EOF
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+
 local nvim_lsp = require('lspconfig')
 local coq = require('coq')
 local on_attach = function(client, bufnr)
@@ -291,7 +329,7 @@ EOF
 
 lua << EOF
 require'lspconfig'.pyright.setup{}
-require'lspconfig'.ccls.setup{}
+require'lspconfig'.ccls.setup{coq.lsp_ensure_capabilities{ capabilities = capabilities }}
 require'lspconfig'.rls.setup{}
 EOF
 

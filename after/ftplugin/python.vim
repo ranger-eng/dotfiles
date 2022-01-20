@@ -1,1 +1,2 @@
-nmap <F9> <Esc>:w<CR>:!python3 %<CR>
+:vnoremap <c-r> <s-i>#<esc>
+
