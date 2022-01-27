@@ -1,6 +1,7 @@
 "------------------------------------------------------------------------------
 " basic stuff
 "------------------------------------------------------------------------------
+"
 "filetype detection, plugin detection, indent detection
 filetype plugin indent on
 "colored syntax highlighting
@@ -104,12 +105,12 @@ Plug 'jpalardy/vim-slime', { 'for': 'python' } " run python script in a seperate
 Plug 'hanschen/vim-ipython-cell', { 'for': 'python' } " same
 Plug 'scrooloose/nerdtree'  " file list - :NERDTree to start
 Plug 'haya14busa/incsearch.vim' " include search and search highlighting 
+Plug 'taketwo/vim-ros' " ros compatibility
 
 " language server protocol
 Plug 'neovim/nvim-lspconfig'
-Plug 'ms-jpq/coq-nvim'
-Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
-Plug 'ms-jpq/coq.thirdparty', {'branch': '3p'}
+Plug 'neoclide/coc.nvim', {'branch': 'release'} 
+Plug 'jackguo380/vim-lsp-cxx-highlight'
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 else
@@ -266,70 +267,70 @@ nnoremap <Leader>q :SlimeSend1 exit<CR>
 " lsp configuration
 "------------------------------------------------------------------------------
 
-lua << EOF
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
-
-local nvim_lsp = require('lspconfig')
-local coq = require('coq')
-local on_attach = function(client, bufnr)
-  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
-
-  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
-
-  -- Mappings.
-  local opts = { noremap=true, silent=true }
-  buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-  buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
-  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-  buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-  buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-  buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-  buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-  buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-  buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-  buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-
-  -- Set some keybinds conditional on server capabilities
-  if client.resolved_capabilities.document_formatting then
-    buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
-  end
-  if client.resolved_capabilities.document_range_formatting then
-    buf_set_keymap("v", "<space>f", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
-  end
-
-  -- Set autocommands conditional on server_capabilities
-  if client.resolved_capabilities.document_highlight then
-    vim.api.nvim_exec([[
-      hi LspReferenceRead cterm=bold ctermbg=red guibg=LightYellow
-      hi LspReferenceText cterm=bold ctermbg=red guibg=LightYellow
-      hi LspReferenceWrite cterm=bold ctermbg=red guibg=LightYellow
-      augroup lsp_document_highlight
-        autocmd! * <buffer>
-        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-      augroup END
-    ]], false)
-  end
-end
-
--- Use a loop to conveniently both setup defined servers 
--- and map buffer local keybindings when the language server attaches
-local servers = { "pyright", "tsserver" }
-for _, lsp in ipairs(servers) do
-  nvim_lsp[lsp].setup { on_attach = on_attach }
-end
-EOF
+"lua << EOF
+"local capabilities = vim.lsp.protocol.make_client_capabilities()
+"capabilities.textDocument.completion.completionItem.snippetSupport = true
+"
+"local nvim_lsp = require('lspconfig')
+"local coq = require('coq')
+"local on_attach = function(client, bufnr)
+"  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+"  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+"
+"  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+"
+"  -- Mappings.
+"  local opts = { noremap=true, silent=true }
+"  buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+"  buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+"  buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+"  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+"  buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+"  buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+"  buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+"  buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+"  buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+"  buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+"  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+"  buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+"  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+"  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+"  buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+"
+"  -- Set some keybinds conditional on server capabilities
+"  if client.resolved_capabilities.document_formatting then
+"    buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+"  end
+"  if client.resolved_capabilities.document_range_formatting then
+"    buf_set_keymap("v", "<space>f", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
+"  end
+"
+"  -- Set autocommands conditional on server_capabilities
+"  if client.resolved_capabilities.document_highlight then
+"    vim.api.nvim_exec([[
+"      hi LspReferenceRead cterm=bold ctermbg=red guibg=LightYellow
+"      hi LspReferenceText cterm=bold ctermbg=red guibg=LightYellow
+"      hi LspReferenceWrite cterm=bold ctermbg=red guibg=LightYellow
+"      augroup lsp_document_highlight
+"        autocmd! * <buffer>
+"        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+"        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+"      augroup END
+"    ]], false)
+"  end
+"end
+"
+"-- Use a loop to conveniently both setup defined servers 
+"-- and map buffer local keybindings when the language server attaches
+"local servers = { "pyright", "tsserver" }
+"for _, lsp in ipairs(servers) do
+"  nvim_lsp[lsp].setup { on_attach = on_attach }
+"end
+"EOF
 
 lua << EOF
 require'lspconfig'.pyright.setup{}
-require'lspconfig'.ccls.setup{coq.lsp_ensure_capabilities{ capabilities = capabilities }}
+require'lspconfig'.ccls.setup{}
 require'lspconfig'.rls.setup{}
 EOF
 
@@ -350,7 +351,7 @@ map g* <Plug>(incsearch-nohl-g*)
 map g# <Plug>(incsearch-nohl-g#)
 
 " path to your python 
-let g:python3_host_prog = '/usr/local/bin/python3'
-let g:python_host_prog = '/usr/bin/python'
+let g:python3_host_prog = '/usr/bin/python3'
+let g:python_host_prog = '/usr/bin/python2'
 
 
