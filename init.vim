@@ -125,6 +125,7 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzy-native.nvim'
+Plug 'ThePrimeagen/harpoon'
 
 " Plug 'kana/vim-smartinput'
 " visual themes
@@ -152,6 +153,23 @@ colorscheme gruvbox
 "------------------------------------------------------------------------------     
 " let g:deoplete#enable_at_startup = 1
 
+"------------------------------------------------------------------------------
+" harpoon configuration
+"------------------------------------------------------------------------------
+lua require("telescope").load_extension('harpoon')
+nnoremap <leader>fh <cmd>:Telescope harpoon marks<cr>
+nnoremap hm <cmd>:lua require("harpoon.mark").add_file()<cr>
+nnoremap hh <cmd>:lua require("harpoon.ui").toggle_quick_menu()<cr>
+nnoremap hj <cmd>:lua require("harpoon.ui").nav_next()<cr>
+nnoremap hk <cmd>:lua require("harpoon.ui").nav_prev()<cr>
+nnoremap h1 <cmd>:lua require("harpoon.ui").nav_file(1)<cr>
+nnoremap h2 <cmd>:lua require("harpoon.ui").nav_file(2)<cr>
+nnoremap h3 <cmd>:lua require("harpoon.ui").nav_file(3)<cr>
+nnoremap h4 <cmd>:lua require("harpoon.ui").nav_file(4)<cr>
+nnoremap h5 <cmd>:lua require("harpoon.ui").nav_file(5)<cr>
+nnoremap h6 <cmd>:lua require("harpoon.ui").nav_file(6)<cr>
+nnoremap h7 <cmd>:lua require("harpoon.ui").nav_file(7)<cr>
+
 
 "------------------------------------------------------------------------------
 " telescope configuration
@@ -161,8 +179,8 @@ colorscheme gruvbox
 nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
 nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
 nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
-nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
 nnoremap <leader>fq <cmd>lua require('telescope.builtin').quickfix()<cr>
+nnoremap <leader>f? <cmd>lua require('telescope.builtin').help_tags()<cr>
 
 lua << EOF
 local actions = require('telescope.actions')
