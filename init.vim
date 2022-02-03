@@ -106,6 +106,7 @@ Plug 'hanschen/vim-ipython-cell', { 'for': 'python' } " same
 Plug 'scrooloose/nerdtree'  " file list - :NERDTree to start
 Plug 'haya14busa/incsearch.vim' " include search and search highlighting 
 Plug 'taketwo/vim-ros' " ros compatibility
+Plug 'caenrique/nvim-maximize-window-toggle' " toggle maximize window
 
 " language server protocol
 Plug 'neovim/nvim-lspconfig'
@@ -145,6 +146,10 @@ let g:NERDTreeChDirMode = 2
 " colorscheme
 colorscheme gruvbox
 
+"------------------------------------------------------------------------------
+" toggle window maximize configuration
+"------------------------------------------------------------------------------
+nnoremap <leader>z :ToggleOnly<Enter>
 
 "------------------------------------------------------------------------------
 " autocompletion configuration
