@@ -109,15 +109,13 @@ Plug 'taketwo/vim-ros' " ros compatibility
 
 " language server protocol
 Plug 'neovim/nvim-lspconfig'
-Plug 'neoclide/coc.nvim', {'branch': 'release'} 
 Plug 'jackguo380/vim-lsp-cxx-highlight'
-if has('nvim')
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-else
-  Plug 'Shougo/deoplete.nvim'
-  Plug 'roxma/nvim-yarp'
-  Plug 'roxma/vim-hug-neovim-rpc'
-endif
+Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/vim-vsnip-integ'
 
 " telescope
 Plug 'nvim-treesitter/nvim-treesitter'
@@ -158,17 +156,17 @@ colorscheme gruvbox
 "------------------------------------------------------------------------------
 lua require("telescope").load_extension('harpoon')
 nnoremap <leader>fh <cmd>:Telescope harpoon marks<cr>
-nnoremap hm <cmd>:lua require("harpoon.mark").add_file()<cr>
-nnoremap hh <cmd>:lua require("harpoon.ui").toggle_quick_menu()<cr>
-nnoremap hj <cmd>:lua require("harpoon.ui").nav_next()<cr>
-nnoremap hk <cmd>:lua require("harpoon.ui").nav_prev()<cr>
-nnoremap h1 <cmd>:lua require("harpoon.ui").nav_file(1)<cr>
-nnoremap h2 <cmd>:lua require("harpoon.ui").nav_file(2)<cr>
-nnoremap h3 <cmd>:lua require("harpoon.ui").nav_file(3)<cr>
-nnoremap h4 <cmd>:lua require("harpoon.ui").nav_file(4)<cr>
-nnoremap h5 <cmd>:lua require("harpoon.ui").nav_file(5)<cr>
-nnoremap h6 <cmd>:lua require("harpoon.ui").nav_file(6)<cr>
-nnoremap h7 <cmd>:lua require("harpoon.ui").nav_file(7)<cr>
+nnoremap <leader>m <cmd>:lua require("harpoon.mark").add_file()<cr>
+nnoremap fh <cmd>:lua require("harpoon.ui").toggle_quick_menu()<cr>
+nnoremap <leader>j <cmd>:lua require("harpoon.ui").nav_next()<cr>
+nnoremap <leader>k <cmd>:lua require("harpoon.ui").nav_prev()<cr>
+nnoremap <leader>1 <cmd>:lua require("harpoon.ui").nav_file(1)<cr>
+nnoremap <leader>2 <cmd>:lua require("harpoon.ui").nav_file(2)<cr>
+nnoremap <leader>3 <cmd>:lua require("harpoon.ui").nav_file(3)<cr>
+nnoremap <leader>4 <cmd>:lua require("harpoon.ui").nav_file(4)<cr>
+nnoremap <leader>5 <cmd>:lua require("harpoon.ui").nav_file(5)<cr>
+nnoremap <leader>6 <cmd>:lua require("harpoon.ui").nav_file(6)<cr>
+nnoremap <leader>7 <cmd>:lua require("harpoon.ui").nav_file(7)<cr>
 
 
 "------------------------------------------------------------------------------
@@ -284,74 +282,88 @@ nnoremap <Leader>q :SlimeSend1 exit<CR>
 "------------------------------------------------------------------------------
 " lsp configuration
 "------------------------------------------------------------------------------
-
-"lua << EOF
-"local capabilities = vim.lsp.protocol.make_client_capabilities()
-"capabilities.textDocument.completion.completionItem.snippetSupport = true
-"
-"local nvim_lsp = require('lspconfig')
-"local coq = require('coq')
-"local on_attach = function(client, bufnr)
-"  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-"  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
-"
-"  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
-"
-"  -- Mappings.
-"  local opts = { noremap=true, silent=true }
-"  buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-"  buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-"  buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
-"  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-"  buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-"  buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-"  buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-"  buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-"  buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-"  buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-"  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-"  buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-"  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-"  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-"  buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-"
-"  -- Set some keybinds conditional on server capabilities
-"  if client.resolved_capabilities.document_formatting then
-"    buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
-"  end
-"  if client.resolved_capabilities.document_range_formatting then
-"    buf_set_keymap("v", "<space>f", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
-"  end
-"
-"  -- Set autocommands conditional on server_capabilities
-"  if client.resolved_capabilities.document_highlight then
-"    vim.api.nvim_exec([[
-"      hi LspReferenceRead cterm=bold ctermbg=red guibg=LightYellow
-"      hi LspReferenceText cterm=bold ctermbg=red guibg=LightYellow
-"      hi LspReferenceWrite cterm=bold ctermbg=red guibg=LightYellow
-"      augroup lsp_document_highlight
-"        autocmd! * <buffer>
-"        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-"        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-"      augroup END
-"    ]], false)
-"  end
-"end
-"
-"-- Use a loop to conveniently both setup defined servers 
-"-- and map buffer local keybindings when the language server attaches
-"local servers = { "pyright", "tsserver" }
-"for _, lsp in ipairs(servers) do
-"  nvim_lsp[lsp].setup { on_attach = on_attach }
-"end
-"EOF
-
 lua << EOF
-require'lspconfig'.pyright.setup{}
-require'lspconfig'.ccls.setup{}
-require'lspconfig'.rls.setup{}
+local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+require'lspconfig'.ccls.setup{
+    init_options = {
+        highlight = { lsRanges = true }
+    },
+    on_attach = function()
+        vim.keymap.set("n", "K", vim.lsp.buf.hover, {buffer=0})
+        vim.keymap.set("n", "gd", vim.lsp.buf.definition, {buffer=0})
+        vim.keymap.set("n", "ff", vim.diagnostic.goto_next, {buffer=0})
+        vim.keymap.set("n", "fd", vim.diagnostic.goto_prev, {buffer=0})
+        vim.keymap.set("n", "<leader>fd", "<cmd>Telescope diagnostics<cr>", {buffer=0})
+    end,
+    capabilities = capabilities
+} -- connect to ccls server with arguments for key bindings on attachment to server
 EOF
 
+"------------------------------------------------------------------------------
+" cmp completion configuration
+"------------------------------------------------------------------------------
+set completeopt=menu,menuone,noselect
+
+lua <<EOF
+  -- Setup nvim-cmp.
+  local cmp = require'cmp'
+
+local has_words_before = function()
+  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+  return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+end
+
+local feedkey = function(key, mode)
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
+end
+
+
+  cmp.setup({
+    snippet = {
+      -- REQUIRED - you must specify a snippet engine
+      expand = function(args)
+        vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+        -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+        -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+        -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+      end,
+    },
+    completion = {autocomplete = false,},
+    mapping = {        
+      
+      ["<Tab>"] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_next_item()
+      elseif vim.fn["vsnip#available"](1) == 1 then
+        feedkey("<Plug>(vsnip-expand-or-jump)", "")
+      elseif has_words_before() then
+        cmp.complete()
+      else
+        fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
+      end
+    end, { "i", "s" }),
+
+    ["<S-Tab>"] = cmp.mapping(function()
+      if cmp.visible() then
+        cmp.select_prev_item()
+      elseif vim.fn["vsnip#jumpable"](-1) == 1 then
+        feedkey("<Plug>(vsnip-jump-prev)", "")
+      end
+    end, { "i", "s" }),
+
+      ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    },
+    sources = cmp.config.sources({
+      { name = 'nvim_lsp' },
+      -- { name = 'luasnip' }, -- For luasnip users.
+      { name = 'vsnip' }, -- For luasnip users.
+      -- { name = 'ultisnips' }, -- For ultisnips users.
+      -- { name = 'snippy' }, -- For snippy users.
+    }, {
+      { name = 'buffer' },
+    })
+  })
+EOF
 
 "------------------------------------------------------------------------------
 " include search
