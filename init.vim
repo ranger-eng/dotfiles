@@ -304,6 +304,9 @@ require'lspconfig'.ccls.setup{
 } -- connect to ccls server with arguments for key bindings on attachment to server
 EOF
 
+nnoremap <leader>cm <cmd>!cmake -H. -BDebug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=YES; ln -s Debug/compile_commands.json .<cr>
+
+
 "------------------------------------------------------------------------------
 " cmp completion configuration
 "------------------------------------------------------------------------------
