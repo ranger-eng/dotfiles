@@ -34,7 +34,6 @@ set scrolloff=8
 " is easier.
 :imap jk <Esc>
 :vmap jk <Esc>
-noremap b s
 nnoremap <C-s> :w<CR>
 inoremap <C-s> <Esc>:w<CR> 
 vnoremap <C-s> <Esc>:w<CR>
@@ -107,6 +106,7 @@ Plug 'scrooloose/nerdtree'  " file list - :NERDTree to start
 Plug 'haya14busa/incsearch.vim' " include search and search highlighting 
 Plug 'taketwo/vim-ros' " ros compatibility
 Plug 'caenrique/nvim-maximize-window-toggle' " toggle maximize window
+Plug 'preservim/nerdtree' " file nav
 
 " language server protocol
 Plug 'neovim/nvim-lspconfig'
@@ -304,7 +304,7 @@ require'lspconfig'.ccls.setup{
 } -- connect to ccls server with arguments for key bindings on attachment to server
 EOF
 
-nnoremap <leader>cm <cmd>!cmake -H. -BDebug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=YES; ln -s Debug/compile_commands.json .<cr>
+nnoremap <leader><leader>c <cmd>!cmake -H. -BDebug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=YES; ln -s Debug/compile_commands.json .<cr>
 
 
 "------------------------------------------------------------------------------
