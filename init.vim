@@ -310,6 +310,7 @@ require'lspconfig'.ccls.setup{
 EOF
 
 nnoremap <leader><leader>c <cmd>!cmake -H. -BDebug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=YES; ln -s Debug/compile_commands.json .<cr>
+nnoremap <leader><leader>C <cmd>!./devel/setup.zsh; cmake -H./src/ -BDebug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=YES; ln -s Debug/compile_commands.json .<cr>
 
 
 "------------------------------------------------------------------------------
