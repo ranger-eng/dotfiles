@@ -73,6 +73,11 @@ noremap tP "+P
 :vnoremap <tab>[ c[]<Esc>P
 :vnoremap <tab>( c()<Esc>P
 
+" From a root directory on a fresh tmux pane, create a template layout with
+" nvim open, two terminals to the right taking about 1/3rd of the page, and
+" NERTree open
+:nmap <leader><leader>1 <cmd>!tmux split-window -h -c ${PWD};tmux resize-pane -R 30;tmux split-window -c ${PWD}; tmux select-pane -L<cr> <cmd>NERDTree<cr> <cmd>wincmd l<cr>
+
 "set path to include current directory and all childeren directories - note,
 "be careful of large projects, this path will bottleneck performance
 set path=.,**
