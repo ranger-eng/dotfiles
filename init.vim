@@ -105,7 +105,6 @@ Plug 'jpalardy/vim-slime', { 'for': 'python' } " run python script in a seperate
 Plug 'hanschen/vim-ipython-cell', { 'for': 'python' } " same
 Plug 'scrooloose/nerdtree'  " file list - :NERDTree to start
 Plug 'haya14busa/incsearch.vim' " include search and search highlighting 
-Plug 'taketwo/vim-ros' " ros compatibility
 Plug 'caenrique/nvim-maximize-window-toggle' " toggle maximize window
 
 " language server protocol
@@ -293,6 +292,16 @@ require'lspconfig'.ccls.setup{
     init_options = {
         highlight = { lsRanges = true }
     },
+    on_attach = function()
+        vim.keymap.set("n", "K", vim.lsp.buf.hover, {buffer=0})
+        vim.keymap.set("n", "gd", vim.lsp.buf.definition, {buffer=0})
+        vim.keymap.set("n", "ff", vim.diagnostic.goto_next, {buffer=0})
+        vim.keymap.set("n", "fd", vim.diagnostic.goto_prev, {buffer=0})
+        vim.keymap.set("n", "<leader>fd", "<cmd>Telescope diagnostics<cr>", {buffer=0})
+    end,
+    capabilities = capabilities
+} -- connect to ccls server with arguments for key bindings on attachment to server
+require'lspconfig'.pyright.setup{
     on_attach = function()
         vim.keymap.set("n", "K", vim.lsp.buf.hover, {buffer=0})
         vim.keymap.set("n", "gd", vim.lsp.buf.definition, {buffer=0})
