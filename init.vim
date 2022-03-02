@@ -108,7 +108,6 @@ Plug 'stevearc/vim-arduino' " make for arduino
 Plug 'jpalardy/vim-slime', { 'for': 'python' } " run python script in a seperate tmux window
 Plug 'hanschen/vim-ipython-cell', { 'for': 'python' } " same
 Plug 'haya14busa/incsearch.vim' " include search and search highlighting 
-Plug 'taketwo/vim-ros' " ros compatibility
 Plug 'caenrique/nvim-maximize-window-toggle' " toggle maximize window
 Plug 'preservim/nerdtree' " file nav
 Plug 'christoomey/vim-tmux-navigator' " vim tmux navigation
@@ -335,9 +334,20 @@ require'lspconfig'.ccls.setup{
     end,
     capabilities = capabilities
 } -- connect to ccls server with arguments for key bindings on attachment to server
+require'lspconfig'.pyright.setup{
+    on_attach = function()
+        vim.keymap.set("n", "K", vim.lsp.buf.hover, {buffer=0})
+        vim.keymap.set("n", "gd", vim.lsp.buf.definition, {buffer=0})
+        vim.keymap.set("n", "ff", vim.diagnostic.goto_next, {buffer=0})
+        vim.keymap.set("n", "fd", vim.diagnostic.goto_prev, {buffer=0})
+        vim.keymap.set("n", "<leader>fd", "<cmd>Telescope diagnostics<cr>", {buffer=0})
+    end,
+    capabilities = capabilities
+} -- connect to ccls server with arguments for key bindings on attachment to server
 EOF
 
 nnoremap <leader><leader>c <cmd>!cmake -H. -BDebug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=YES; ln -s Debug/compile_commands.json .<cr>
+nnoremap <leader><leader>C <cmd>!./devel/setup.zsh; cmake -H./src/ -BDebug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=YES; ln -s Debug/compile_commands.json .<cr>
 
 
 "------------------------------------------------------------------------------
