@@ -343,7 +343,17 @@ require'lspconfig'.pyright.setup{
         vim.keymap.set("n", "<leader>fd", "<cmd>Telescope diagnostics<cr>", {buffer=0})
     end,
     capabilities = capabilities
-} -- connect to ccls server with arguments for key bindings on attachment to server
+}
+require'lspconfig'.rust_analyzer.setup({
+    on_attach = function()
+        vim.keymap.set("n", "K", vim.lsp.buf.hover, {buffer=0})
+        vim.keymap.set("n", "gd", vim.lsp.buf.definition, {buffer=0})
+        vim.keymap.set("n", "ff", vim.diagnostic.goto_next, {buffer=0})
+        vim.keymap.set("n", "fd", vim.diagnostic.goto_prev, {buffer=0})
+        vim.keymap.set("n", "<leader>fd", "<cmd>Telescope diagnostics<cr>", {buffer=0})
+    end,
+    capabilities=capabilities
+})
 EOF
 
 nnoremap <leader><leader>c <cmd>!cmake -H. -BDebug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=YES; ln -s Debug/compile_commands.json .<cr>
@@ -379,7 +389,7 @@ end
         -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
       end,
     },
-    completion = {autocomplete = false,},
+    completion = {autocomplete = true,},
     mapping = {        
       
       ["<Tab>"] = cmp.mapping(function(fallback)
