@@ -196,7 +196,14 @@ require('telescope').setup {
     defaults = {
         file_sorter = require('telescope.sorters').get_fzy_sorter,
         vimgrep_arguments = {
-            'rg',
+            "rg",
+            "--color=never",
+            "--no-heading",
+            "--with-filename",
+            "--line-number",
+            "--column",
+            "--smart-case",
+            "--trim"
         },
 
         prompt_prefix = '>',
