@@ -103,7 +103,6 @@ set shortmess+=c
 " plug in install 
 "------------------------------------------------------------------------------
 call plug#begin('~/.config/nvim/plugged/')
-misc
 Plug 'stevearc/vim-arduino' " make for arduino
 Plug 'jpalardy/vim-slime', { 'for': 'python' } " run python script in a seperate tmux window
 Plug 'hanschen/vim-ipython-cell', { 'for': 'python' } " same
