@@ -103,7 +103,7 @@ set shortmess+=c
 " plug in install 
 "------------------------------------------------------------------------------
 call plug#begin('~/.config/nvim/plugged/')
-" misc
+misc
 Plug 'stevearc/vim-arduino' " make for arduino
 Plug 'jpalardy/vim-slime', { 'for': 'python' } " run python script in a seperate tmux window
 Plug 'hanschen/vim-ipython-cell', { 'for': 'python' } " same
@@ -111,6 +111,7 @@ Plug 'haya14busa/incsearch.vim' " include search and search highlighting
 Plug 'caenrique/nvim-maximize-window-toggle' " toggle maximize window
 Plug 'preservim/nerdtree' " file nav
 Plug 'christoomey/vim-tmux-navigator' " vim tmux navigation
+Plug 'tpope/vim-commentary' " comments
 
 " language server protocol
 Plug 'neovim/nvim-lspconfig'
@@ -134,7 +135,7 @@ Plug 'ThePrimeagen/harpoon'
 " Plug 'kana/vim-smartinput'
 " visual themes
 Plug 'gruvbox-community/gruvbox' 
-Plug 'vim-airline/vim-airline'
+" Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
 call plug#end()
