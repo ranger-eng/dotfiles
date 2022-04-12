@@ -112,6 +112,9 @@ Plug 'preservim/nerdtree' " file nav
 Plug 'christoomey/vim-tmux-navigator' " vim tmux navigation
 Plug 'tpope/vim-commentary' " comments
 
+" build system
+Plug 'cdelledonne/vim-cmake'
+
 " language server protocol
 Plug 'neovim/nvim-lspconfig'
 Plug 'jackguo380/vim-lsp-cxx-highlight'
@@ -303,10 +306,20 @@ nnoremap <Leader>q :SlimeSend1 exit<CR>
 "------------------------------------------------------------------------------
 lua << EOF
 local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
-require'lspconfig'.ccls.setup{
-    init_options = {
-        highlight = { lsRanges = true }
-    },
+--require'lspconfig'.ccls.setup{
+--    init_options = {
+--        highlight = { lsRanges = true }
+--    },
+--    on_attach = function()
+--        vim.keymap.set("n", "K", vim.lsp.buf.hover, {buffer=0})
+--        vim.keymap.set("n", "gd", vim.lsp.buf.definition, {buffer=0})
+--        vim.keymap.set("n", "ff", vim.diagnostic.goto_next, {buffer=0})
+--        vim.keymap.set("n", "fd", vim.diagnostic.goto_prev, {buffer=0})
+--        vim.keymap.set("n", "<leader>fd", "<cmd>Telescope diagnostics<cr>", {buffer=0})
+--    end,
+--    capabilities = capabilities
+--} -- connect to ccls server with arguments for key bindings on attachment to server
+require'lspconfig'.clangd.setup{
     on_attach = function()
         vim.keymap.set("n", "K", vim.lsp.buf.hover, {buffer=0})
         vim.keymap.set("n", "gd", vim.lsp.buf.definition, {buffer=0})
@@ -315,7 +328,7 @@ require'lspconfig'.ccls.setup{
         vim.keymap.set("n", "<leader>fd", "<cmd>Telescope diagnostics<cr>", {buffer=0})
     end,
     capabilities = capabilities
-} -- connect to ccls server with arguments for key bindings on attachment to server
+} -- connect to clangd server with arguments for key bindings on attachment to server
 require'lspconfig'.pyright.setup{
     on_attach = function()
         vim.keymap.set("n", "K", vim.lsp.buf.hover, {buffer=0})
