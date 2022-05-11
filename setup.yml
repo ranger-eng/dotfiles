@@ -1,0 +1,86 @@
+---
+
+- hosts: localhost
+  tasks:
+    
+# user info
+  
+  - name: debug 
+    debug: var=ansible_env.HOME
+
+# install basic packages
+
+  - name: install zsh
+    become: true
+    apt:
+      name: git, htop, zsh, python3, python3-pip, ripgrep, ccls, wget, npm
+
+# pip installer
+
+  - name: install pip packages
+    become: true
+    pip:
+      name: pexpect, matplotlib, numpy, scipy, pyright
+
+
+
+# switch shell to zsh
+
+  - name: make zsh the default shell
+    become: true
+    ansible.builtin.command:
+      cmd: chsh --shell /bin/zsh
+
+# install oh-my-zsh
+
+  - name: install oh-my-zsh
+    shell: wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+    args:
+      creates: ./install.sh
+
+# install p10k
+
+  - name: install p10k
+    ansible.builtin.command: git clone --depth=1 https://github.com/romkatv/powerlevel10k.git {{ ansible_env.HOME }}/powerlevel10k
+    args:
+      creates: "{{ ansible_env.HOME }}/powerlevel10k"
+
+  - name: populate ~/.zshrc
+    shell: echo "source {{ ansible_env.HOME }}/powerlevel10k/powerlevel10k.zsh-theme" >> {{ ansible_env.HOME }}/.zshrc
+      
+# install neovim
+
+  - name: neovim depends
+    become: true
+    apt:
+      name: ninja-build, gettext, libtool, libtool-bin, autoconf, automake, cmake, g++, pkg-config, unzip
+
+  - name: clone neovim git
+    become: true
+    git: 
+      repo: https://github.com/neovim/neovim.git
+      dest: /src/neovim/
+
+  - name: make neovim
+    become: true
+    ansible.builtin.command: make CMAKE_BUILD_TYPE=Release CMAKE_INSTALL_PREFIX=/usr/local/ install
+    args:
+      chdir: /src/neovim/
+      creates: /usr/local/bin/nvim
+
+  - name: neovim bin export 
+    ansible.builtin.command: echo "export PATH='/usr/local/bin/:$PATH'" >> {{ ansible_env.HOME }}/.zshrc
+
+# install dot files
+
+  - name: install nvim dot files
+    ansible.builtin.command: cp {{ ansible_env.HOME }}/nvim/init.vim {{ ansible_env.HOME }}/.config/nvim/
+
+  - name: install nvim dot files
+    ansible.builtin.command: cp -r {{ ansible_env.HOME }}/nvim/after/ {{ ansible_env.HOME }}/.config/nvim/
+
+  - name: install nvim dot files
+    ansible.builtin.command: cp -r {{ ansible_env.HOME }}/nvim/autoload/ {{ ansible_env.HOME }}/.config/nvim/
+
+  - name: install tmux dot file
+    ansible.builtin.command: cp {{ ansible_env.HOME }}/nvim/.tmux.conf {{ ansible_env.HOME }}/
