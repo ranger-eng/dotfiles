@@ -6,7 +6,7 @@
 # user info
   
   - name: debug 
-    debug: var=ansible_env.HOME
+    debug: var=ansible_env
 
 # install basic packages
 
@@ -22,14 +22,13 @@
     pip:
       name: pexpect, matplotlib, numpy, scipy, pyright
 
-
-
 # switch shell to zsh
 
   - name: make zsh the default shell
     become: true
     ansible.builtin.command:
-      cmd: chsh --shell /bin/zsh
+      cmd: chsh --shell /usr/bin/zsh
+    when: ansible_env.SHELL != "/usr/bin/zsh"
 
 # install oh-my-zsh
 
@@ -45,9 +44,16 @@
     args:
       creates: "{{ ansible_env.HOME }}/powerlevel10k"
 
-  - name: populate ~/.zshrc
+  - name: search .zshrc for p10k theme
+    shell: grep /pwerlevel10k/powerlevel10k.zsh-theme {{ ansible_env.HOME }}/powerlevel10k/powerlevel10k.zsh-theme 
+    register: p10k_grep_results
+    ignore_errors: true
+    failed_when: 0
+
+  - name: populate ~/.zshrc with p10k
     shell: echo "source {{ ansible_env.HOME }}/powerlevel10k/powerlevel10k.zsh-theme" >> {{ ansible_env.HOME }}/.zshrc
-      
+    when: p10k_grep_results == ''  
+
 # install neovim
 
   - name: neovim depends
@@ -68,8 +74,15 @@
       chdir: /src/neovim/
       creates: /usr/local/bin/nvim
 
-  - name: neovim bin export 
+  - name: verify path to neovim
+    shell: echo ${PATH} | grep /usr/local/bin
+    register: usr_local_bin_grep_results
+    ignore_errors: true
+    failed_when: 0
+
+  - name: append ${PATH} environmental variable with path to neovim
     ansible.builtin.command: echo "export PATH='/usr/local/bin/:$PATH'" >> {{ ansible_env.HOME }}/.zshrc
+    when: usr_local_bin_grep_results.stdout == ''
 
 # install dot files
 
