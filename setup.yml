@@ -3,17 +3,18 @@
 - hosts: localhost
   tasks:
     
-# user info
-  
-  - name: debug 
-    debug: var=ansible_env
-
 # install basic packages
 
   - name: install zsh
     become: true
     apt:
-      name: git, htop, zsh, python3, python3-pip, ripgrep, ccls, wget, npm
+      name: git, htop, zsh, python3, python3-pip, ripgrep, ccls, wget, npm, tmux
+
+# tmux plugins
+  - name: setup tmux plugin manager
+    git:
+      repo: https://github.com/tmux-plugins/tpm
+      dest: "{{ ansible_env.HOME }}/.tmux/plugins/tpm"
 
 # pip installer
 
