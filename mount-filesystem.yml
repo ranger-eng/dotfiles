@@ -1,0 +1,60 @@
+---
+- hosts: localhost
+  tasks:
+
+# make directories
+
+  - name: mkdir /zaphod/fluid
+    become: true
+    ansible.builtin.command: mkdir -p /zaphod/fluid
+    args:
+      creates: /zaphod/fluid
+
+  - name: mkdir /zaphod/cloud-machine
+    become: true
+    ansible.builtin.command: mkdir -p /zaphod/cloud-machine
+    args:
+      creates: /zaphod/cloud-machine
+
+  - name: mkdir /zaphod/backup.cloud
+    become: true
+    ansible.builtin.command: mkdir -p /zaphod/backup.cloud
+    args:
+      creates: /zaphod/backup.cloud
+
+# mount files
+
+  - name: mount /zaphod/fluid
+    become: true
+    ansible.builtin.command: mount /dev/sdb2 /zaphod/fluid
+    ignore_errors: true
+
+  - name: mount /zaphod/cloud-machine
+    become: true
+    ansible.builtin.command: mount /dev/md/0 /zaphod/cloud-machine
+    ignore_errors: true
+
+  - name: mount /zaphod/backup.cloud
+    become: true
+    ansible.builtin.command: mount /dev/md/1 /zaphod/backup.cloud
+    ignore_errors: true
+
+# add UUIDs to /etc/fstab
+
+  - name: Add a line to a file if the file does not exist, without passing regexp
+    become: true
+    ansible.builtin.lineinfile:
+      path: /etc/fstab
+      line: UUID=1014b0c5-cf96-438e-a3c5-316e1445b3ee /zaphod/fluid ext4 errors=remount-ro 0 1
+
+  - name: Add a line to a file if the file does not exist, without passing regexp
+    become: true
+    ansible.builtin.lineinfile:
+      path: /etc/fstab
+      line: UUID=9b9e0e3e-1876-4608-9dc2-a688fba68279 /zaphod/cloud-machine ext4 errors=remount-ro 0 1
+
+  - name: Add a line to a file if the file does not exist, without passing regexp
+    become: true
+    ansible.builtin.lineinfile:
+      path: /etc/fstab
+      line: UUID=49915874-b812-493e-a833-e68221d12a9c /zaphod/backup.cloud ext4 errors=remount-ro 0 1

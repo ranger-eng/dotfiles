@@ -1,0 +1,13 @@
+---
+
+- hosts: localhost
+  tasks:
+
+  - name: install samba
+    become: true
+    apt:
+      name: samba
+
+  - name: copy samba config
+    become: true
+    ansible.builtin.command: cp ./samba/smb.conf /etc/samba/smb.conf

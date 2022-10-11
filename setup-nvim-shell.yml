@@ -8,7 +8,7 @@
   - name: install zsh
     become: true
     apt:
-      name: git, htop, zsh, python3, python3-pip, ripgrep, ccls, wget, npm, tmux
+      name: git, htop, zsh, python3, python3-pip, ripgrep, ccls, wget, npm, tmux, tree
 
 # tmux plugins
   - name: setup tmux plugin manager
@@ -26,7 +26,7 @@
 # switch shell to zsh
 
   - name: make zsh the default shell
-    become: true
+    become:
     ansible.builtin.command:
       cmd: chsh --shell /usr/bin/zsh
     when: ansible_env.SHELL != "/usr/bin/zsh"
@@ -53,7 +53,6 @@
 
   - name: populate ~/.zshrc with p10k
     shell: echo "source {{ ansible_env.HOME }}/powerlevel10k/powerlevel10k.zsh-theme" >> {{ ansible_env.HOME }}/.zshrc
-    when: p10k_grep_results == ''  
 
 # install neovim
 
@@ -83,18 +82,17 @@
 
   - name: append ${PATH} environmental variable with path to neovim
     ansible.builtin.command: echo "export PATH='/usr/local/bin/:$PATH'" >> {{ ansible_env.HOME }}/.zshrc
-    when: usr_local_bin_grep_results.stdout == ''
 
 # install dot files
 
   - name: install nvim dot files
-    ansible.builtin.command: cp {{ ansible_env.HOME }}/nvim/init.vim {{ ansible_env.HOME }}/.config/nvim/
+    ansible.builtin.command: cp ./nvim/init.vim {{ ansible_env.HOME }}/.config/nvim/
 
   - name: install nvim dot files
-    ansible.builtin.command: cp -r {{ ansible_env.HOME }}/nvim/after/ {{ ansible_env.HOME }}/.config/nvim/
+    ansible.builtin.command: cp -r ./nvim/after/ {{ ansible_env.HOME }}/.config/nvim/
 
   - name: install nvim dot files
-    ansible.builtin.command: cp -r {{ ansible_env.HOME }}/nvim/autoload/ {{ ansible_env.HOME }}/.config/nvim/
+    ansible.builtin.command: cp -r ./nvim/autoload/ {{ ansible_env.HOME }}/.config/nvim/
 
   - name: install tmux dot file
-    ansible.builtin.command: cp {{ ansible_env.HOME }}/nvim/.tmux.conf {{ ansible_env.HOME }}/
+    ansible.builtin.command: cp ./.tmux.conf {{ ansible_env.HOME }}/

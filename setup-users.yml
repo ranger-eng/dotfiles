@@ -1,0 +1,26 @@
+---
+- hosts: localhost
+  become: true
+  tasks:
+
+# groups
+
+  - name: create a shared group for the house
+    ansible.builtin.group:
+      name: 29auman
+      state: present
+
+# users
+
+  - name: create riss user
+    ansible.builtin.user:
+      name: riss
+      groups: 29auman
+      append: yes
+      create_home: yes
+
+  - name: make sure ranger is in 29auman groups
+    ansible.builtin.user:
+      name: ranger
+      groups: 29auman
+      append: yes
