@@ -1,0 +1,47 @@
+---
+
+- hosts: localhost
+  tasks:
+    
+# make and install nvim from source
+
+  - name: neovim depends
+    become: true
+    apt:
+      name: ninja-build
+
+  - name: clone neovim git
+    become: true
+    git: 
+      repo: https://github.com/neovim/neovim.git
+      dest: /src/neovim/
+
+  - name: make neovim
+    become: true
+    command: make CMAKE_BUILD_TYPE=Release CMAKE_INSTALL_PREFIX=/usr/local/ install
+    args:
+      chdir: /src/neovim/
+      creates: /usr/local/bin/nvim
+
+  - name: verify path to neovim
+    shell: echo ${PATH} | grep /usr/local/bin
+    register: usr_local_bin_grep_results
+    ignore_errors: true
+    failed_when: 0
+
+  - name: append ${PATH} environmental variable with path to neovim
+    command: echo "export PATH='/usr/local/bin/:$PATH'" >> {{ ansible_env.HOME }}/.zshrc
+
+# install dot files
+
+  - name: install nvim dot files
+    command: cp ./nvim/init.vim {{ ansible_env.HOME }}/.config/nvim/
+
+  - name: install nvim dot files
+    command: cp -r ./nvim/after/ {{ ansible_env.HOME }}/.config/nvim/
+
+  - name: install nvim dot files
+    command: cp -r ./nvim/autoload/ {{ ansible_env.HOME }}/.config/nvim/
+
+  - name: install tmux dot file
+    command: cp ./.tmux.conf {{ ansible_env.HOME }}/
