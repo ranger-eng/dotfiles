@@ -42,13 +42,17 @@ nmap PO O<Esc>j
 set timeoutlen=400
 nnoremap Y y$
 
-" cool thing to be able to move lines up and down
-vnoremap J :m '>+1<CR>gv=gv
-vnoremap K :m '<-2<CR>gv=gv
-inoremap <C-k> <esc>:m .-2<CR>==i
-inoremap <C-j> <esc>:m .+1<CR>==i
-nnoremap <leader>k :m .-2<CR>==
-nnoremap <leader>j :m .+1<CR>==
+" Move forward by one word (w) -> L
+nnoremap L w
+
+" Move backward by one word (b) -> H
+nnoremap H b
+
+" Move down by one paragraph (}) -> J
+nnoremap J }
+
+" Move up by one paragraph ({) -> K
+nnoremap K {
 
 " quick fix list navigation
 nnoremap qj :cn<CR>
@@ -321,7 +325,7 @@ local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protoco
 --} -- connect to ccls server with arguments for key bindings on attachment to server
 require'lspconfig'.clangd.setup{
     on_attach = function()
-        vim.keymap.set("n", "K", vim.lsp.buf.hover, {buffer=0})
+        vim.keymap.set("n", "bh", vim.lsp.buf.hover, {buffer=0})
         vim.keymap.set("n", "gd", vim.lsp.buf.definition, {buffer=0})
         vim.keymap.set("n", "ff", vim.diagnostic.goto_next, {buffer=0})
         vim.keymap.set("n", "fd", vim.diagnostic.goto_prev, {buffer=0})
@@ -331,7 +335,7 @@ require'lspconfig'.clangd.setup{
 } -- connect to clangd server with arguments for key bindings on attachment to server
 require'lspconfig'.pyright.setup{
     on_attach = function()
-        vim.keymap.set("n", "K", vim.lsp.buf.hover, {buffer=0})
+        vim.keymap.set("n", "bh", vim.lsp.buf.hover, {buffer=0})
         vim.keymap.set("n", "gd", vim.lsp.buf.definition, {buffer=0})
         vim.keymap.set("n", "ff", vim.diagnostic.goto_next, {buffer=0})
         vim.keymap.set("n", "fd", vim.diagnostic.goto_prev, {buffer=0})
@@ -341,7 +345,7 @@ require'lspconfig'.pyright.setup{
 }
 require'lspconfig'.rust_analyzer.setup({
     on_attach = function()
-        vim.keymap.set("n", "K", vim.lsp.buf.hover, {buffer=0})
+        vim.keymap.set("n", "bh", vim.lsp.buf.hover, {buffer=0})
         vim.keymap.set("n", "gd", vim.lsp.buf.definition, {buffer=0})
         vim.keymap.set("n", "ff", vim.diagnostic.goto_next, {buffer=0})
         vim.keymap.set("n", "fd", vim.diagnostic.goto_prev, {buffer=0})

@@ -8,7 +8,7 @@
   - name: install zsh
     become: true
     apt:
-      name: git, htop, zsh, python3, python3-pip, ripgrep, ccls, wget, npm, tmux, tree
+      name: git, htop, zsh, python3, python3-pip, ripgrep, wget, tmux, tree
 
 # tmux plugins
   - name: setup tmux plugin manager
@@ -16,17 +16,10 @@
       repo: https://github.com/tmux-plugins/tpm
       dest: "{{ ansible_env.HOME }}/.tmux/plugins/tpm"
 
-# pip installer
-
-  - name: install pip packages
-    become: true
-    pip:
-      name: pexpect, matplotlib, numpy, scipy, pyright
-
 # switch shell to zsh
 
   - name: make zsh the default shell
-    become:
+    become: true
     ansible.builtin.command:
       cmd: chsh --shell /usr/bin/zsh
     when: ansible_env.SHELL != "/usr/bin/zsh"
