@@ -455,3 +455,21 @@ let g:python3_host_prog = '/usr/bin/python3'
 let g:python_host_prog = '/usr/bin/python2'
 
 
+lua << EOF
+vim.api.nvim_set_keymap('n', '<leader>b', [[:lua RunBuildScript()<CR>]], { noremap = true, silent = true })
+
+function RunBuildScript()
+    local build_file = "build.sh"
+    local rootdir = "rootdir"
+
+    -- Check if build.sh and rootdir exist in the current directory
+    local build_exists = vim.fn.filereadable(build_file) == 1
+    local rootdir_exists = vim.fn.isdirectory(rootdir) == 1
+
+    if build_exists and rootdir_exists then
+        vim.cmd("!./build.sh")
+    else
+        print("Error: build.sh or rootdir/ not found in current directory")
+    end
+end
+EOF
